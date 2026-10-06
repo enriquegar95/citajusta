@@ -1,0 +1,15 @@
+target/
+node_modules/
+dist/
+.angular/
+
+.env
+.env.local
+
+.idea/
+.vscode/
+Thumbs.db
+
+CLAUDE.md
+.claude/
+docs/
