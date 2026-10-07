@@ -1,0 +1,50 @@
+# Entorno de desarrollo de CitaJusta: Oracle AI Database 26ai Free + Keycloak.
+# Uso (desde la raíz del repo): docker compose -f infra/docker-compose.yml up -d
+# Las versiones están fijadas aquí (ADR-001). Los secretos van en infra/.env (no va a Git).
+
+name: citajusta
+
+services:
+
+  oracle:
+    # 23.26.3 según el ADR-001; variante "lite" (más pequeña). Ver docs/docker-dev.md.
+    image: container-registry.oracle.com/database/free:23.26.3.0-lite
+    environment:
+      # Contraseña de SYS, SYSTEM y PDBADMIN. Si falta en .env, Compose no arranca.
+      ORACLE_PWD: ${ORACLE_PWD:?Falta ORACLE_PWD en infra/.env}
+    ports:
+      # Solo accesible desde tu ordenador (127.0.0.1), no desde la red.
+      - "127.0.0.1:1521:1521"
+    volumes:
+      # Los datos sobreviven a "docker compose down". Recrear la base de datos tarda minutos.
+      - oracle-data:/opt/oracle/oradata
+    # Sin healthcheck propio: se usa el que trae la imagen (checkDBStatus.sh).
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.8.0
+    # start-dev: modo desarrollo (HTTP, caché local, base dev-file).
+    # --import-realm: importa los ficheros de /opt/keycloak/data/import al arrancar.
+    command: ["start-dev", "--import-realm"]
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KC_BOOTSTRAP_ADMIN_USERNAME:?Falta KC_BOOTSTRAP_ADMIN_USERNAME en infra/.env}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_BOOTSTRAP_ADMIN_PASSWORD:?Falta KC_BOOTSTRAP_ADMIN_PASSWORD en infra/.env}
+      # Activa /health, /health/live y /health/ready en el puerto de gestión 9000.
+      KC_HEALTH_ENABLED: "true"
+    ports:
+      # Consola de administración: http://localhost:8080/admin
+      - "127.0.0.1:8080:8080"
+      # El 9000 no se publica: el healthcheck se ejecuta dentro del contenedor.
+    volumes:
+      # Vacía hasta S0-08, cuando se exporte el realm al repositorio. Solo lectura.
+      - ./keycloak/import:/opt/keycloak/data/import:ro
+    healthcheck:
+      # La imagen no trae curl: se abre una conexión TCP con Bash y se pide /health/ready
+      # (método de la guía oficial "Health checks" de Keycloak 26.8.0).
+      test: ["CMD", "bash", "-c", "{ printf 'HEAD /health/ready HTTP/1.0\\r\\n\\r\\n' >&0; grep 'HTTP/1.0 200'; } 0<>/dev/tcp/localhost/9000"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+volumes:
+  oracle-data:
