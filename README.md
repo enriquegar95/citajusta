@@ -2,7 +2,7 @@
 
 Plataforma de cita previa para la administración pública, diseñada para que conseguir cita no dependa de ser el más rápido.
 
-> **Estado: en construcción.** Por ahora existen la estructura del repositorio y las convenciones de trabajo. Todo lo demás que describe este README es el objetivo del proyecto y todavía no está implementado.
+> **Estado: en construcción.** Por ahora existen la estructura del repositorio, las convenciones de trabajo y el entorno de desarrollo con Docker. Todo lo demás que describe este README es el objetivo del proyecto y todavía no está implementado.
 
 ## Qué es y qué problema resuelve
 
@@ -26,6 +26,44 @@ Hay tres tipos de usuario: ciudadano, funcionario y administrador.
 | `frontend/` | Aplicación web en Angular: portal del ciudadano, panel del funcionario y panel de administración |
 | `infra/` | Todo lo necesario para levantar el entorno en local con Docker Compose (base de datos, Keycloak y, en fases posteriores, Kafka, Redis y MongoDB), junto con su configuración |
 | `.github/workflows/` | Integración continua con GitHub Actions: compilará el proyecto y ejecutará los tests en cada push y en cada Pull Request |
+
+## Entorno de desarrollo
+
+Requisito: Docker Desktop (en Windows, con WSL 2).
+
+Levanta dos servicios, accesibles solo desde tu propio ordenador:
+
+| Servicio | Acceso |
+|---|---|
+| Oracle AI Database 26ai Free | `localhost:1521`, nombre de servicio `FREEPDB1` |
+| Keycloak | Consola de administración en http://localhost:8080/admin |
+
+### Primera vez
+
+1. Copia `infra/.env.example` como `infra/.env` y pon tus contraseñas. `infra/.env` no se sube al repositorio.
+2. Levanta el entorno desde la raíz del repositorio:
+```
+   docker compose -f infra/docker-compose.yml up -d
+```
+3. Comprueba que los dos servicios aparecen como `healthy`:
+```
+   docker compose -f infra/docker-compose.yml ps
+```
+   La primera vez, Oracle tarda varios minutos porque crea la base de datos.
+
+### Parar el entorno
+
+| Comando | Qué hace |
+|---|---|
+| `docker compose -f infra/docker-compose.yml stop` | Para los contenedores sin borrarlos |
+| `docker compose -f infra/docker-compose.yml down` | Para y borra los contenedores. Los datos de Oracle se conservan en su volumen |
+
+> **Cuidado:** `docker compose -f infra/docker-compose.yml down -v` borra también el volumen. Se pierden **todos los datos de Oracle** y la base de datos se crea de cero en el siguiente arranque.
+
+### A tener en cuenta
+
+- La contraseña de Oracle (`ORACLE_PWD`) solo se aplica cuando se crea la base de datos. Cambiarla después en `infra/.env` no tiene efecto, salvo que se borre el volumen.
+- Keycloak no conserva datos al recrear su contenedor. *(Previsto: el realm del proyecto se importará automáticamente desde `infra/keycloak/import/`.)*
 
 ## Flujo de ramas
 
