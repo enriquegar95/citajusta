@@ -49,7 +49,7 @@ Levanta dos servicios, accesibles solo desde tu propio ordenador:
 ```
    docker compose -f infra/docker-compose.yml ps
 ```
-   La primera vez, Oracle tarda varios minutos porque crea la base de datos.
+   La primera vez, Oracle tarda varios minutos porque crea la base de datos. Mientras tanto, ps puede mostrarlo como unhealthy: es normal. Estará listo cuando sus logs muestren DATABASE IS READY TO USE!.
 
 ### Parar el entorno
 
@@ -63,7 +63,7 @@ Levanta dos servicios, accesibles solo desde tu propio ordenador:
 ### A tener en cuenta
 
 - La contraseña de Oracle (`ORACLE_PWD`) solo se aplica cuando se crea la base de datos. Cambiarla después en `infra/.env` no tiene efecto, salvo que se borre el volumen.
-- Keycloak no conserva datos al recrear su contenedor. *(Previsto: el realm del proyecto se importará automáticamente desde `infra/keycloak/import/`.)*
+- Keycloak no conserva datos al recrear su contenedor. *(Previsto: el realm del proyecto se importará automáticamente al arrancar.)*
 
 ## Flujo de ramas
 
