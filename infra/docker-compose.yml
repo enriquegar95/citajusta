@@ -23,8 +23,7 @@ services:
   keycloak:
     image: quay.io/keycloak/keycloak:26.8.0
     # start-dev: modo desarrollo (HTTP, caché local, base dev-file).
-    # --import-realm: importa los ficheros de /opt/keycloak/data/import al arrancar.
-    command: ["start-dev", "--import-realm"]
+    command: ["start-dev"]
     environment:
       KC_BOOTSTRAP_ADMIN_USERNAME: ${KC_BOOTSTRAP_ADMIN_USERNAME:?Falta KC_BOOTSTRAP_ADMIN_USERNAME en infra/.env}
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_BOOTSTRAP_ADMIN_PASSWORD:?Falta KC_BOOTSTRAP_ADMIN_PASSWORD en infra/.env}
@@ -34,9 +33,6 @@ services:
       # Consola de administración: http://localhost:8080/admin
       - "127.0.0.1:8080:8080"
       # El 9000 no se publica: el healthcheck se ejecuta dentro del contenedor.
-    volumes:
-      # Vacía hasta S0-08, cuando se exporte el realm al repositorio. Solo lectura.
-      - ./keycloak/import:/opt/keycloak/data/import:ro
     healthcheck:
       # La imagen no trae curl: se abre una conexión TCP con Bash y se pide /health/ready
       # (método de la guía oficial "Health checks" de Keycloak 26.8.0).
