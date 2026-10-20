@@ -115,3 +115,5 @@ Los commits siguen **[Conventional Commits](https://www.conventionalcommits.org/
 Un cambio que rompe la compatibilidad se marca con `!` después del tipo, por ejemplo `feat(api)!: cambiar el formato de las fechas`.
 
 Esta convención permite leer y filtrar la historia del proyecto, y calcular la versión automáticamente: un `fix` sube la versión de parche, un `feat` la versión menor y un cambio incompatible la versión mayor.
+
+El título de cada Pull Request sigue la misma convención, porque con Squash and merge es el mensaje del commit que queda en `main`. GitHub le añade al final el número del PR, por ejemplo `docs: explicar el flujo de trabajo con pull requests (#1)`.
