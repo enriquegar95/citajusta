@@ -40,12 +40,17 @@ Levanta dos servicios, accesibles solo desde tu propio ordenador:
 
 ### Primera vez
 
-1. Copia `infra/.env.example` como `infra/.env` y pon tus contraseñas. `infra/.env` no se sube al repositorio.
-2. Levanta el entorno desde la raíz del repositorio:
+1. Clona el repositorio y entra en su carpeta:
+```
+   git clone https://github.com/enriquegar95/citajusta.git
+   cd citajusta
+```
+2. Copia `infra/.env.example` como `infra/.env` y pon tus contraseñas. `infra/.env` no se sube al repositorio.
+3. Levanta el entorno desde la raíz del repositorio:
 ```
    docker compose -f infra/docker-compose.yml up -d
 ```
-3. Comprueba que los dos servicios aparecen como `healthy`:
+4. Comprueba que los dos servicios aparecen como `healthy`:
 ```
    docker compose -f infra/docker-compose.yml ps
 ```
