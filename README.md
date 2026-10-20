@@ -69,6 +69,7 @@ Levanta dos servicios, accesibles solo desde tu propio ordenador:
 
 - **`main` es siempre estable**: lo que hay en `main` compila y pasa todos los tests. Nunca se trabaja directamente sobre ella.
   - **Única excepción:** el commit inicial se hizo directamente sobre `main`, porque antes de él no existe ningún commit desde el que crear una rama.
+   - **GitHub lo impone:** `main` solo acepta cambios mediante Pull Request. Antes de publicar el repositorio, las ramas se integraban en local.
 - **Cada cambio se hace en una rama corta**, creada desde `main`, que vive solo lo que dura ese cambio.
 - **El prefijo indica el tipo de cambio:**
 
@@ -80,11 +81,12 @@ Levanta dos servicios, accesibles solo desde tu propio ordenador:
 
 El ciclo de cada rama:
 
-1. Crear la rama desde `main` actualizado.
+1. Actualizar `main` y crear la rama desde ella (`git switch main`, `git pull`, `git switch -c <rama>`).
 2. Trabajar en ella con commits pequeños.
-3. Abrir un Pull Request hacia `main`. *(Previsto: cuando el repositorio esté publicado en GitHub. Mientras tanto, la rama se revisa e integra en local.)*
-4. Integrar en `main` cuando la revisión esté aprobada y los tests pasen. *(Previsto: que los tests se ejecuten en el CI. Hasta que exista, se ejecutan en local antes de integrar.)*
-5. Borrar la rama.
+3. Subir la rama a GitHub: `git push -u origin <rama>`.
+4. Abrir un Pull Request hacia `main`, con el título en Conventional Commits.
+5. Integrarlo en GitHub con **Squash and merge**: los commits de la rama se convierten en un único commit en `main`, cuyo mensaje es el título del PR. Antes de integrar, los tests se ejecutan en local. *(Previsto: que se ejecuten automáticamente en el CI.)*
+6. Borrar la rama. GitHub la borra automáticamente al integrar; en local, volver a `main`, hacer `git pull` y borrar la rama local.
 
 ## Convención de commits
 
