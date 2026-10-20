@@ -74,7 +74,7 @@ Levanta dos servicios, accesibles solo desde tu propio ordenador:
 
 - **`main` es siempre estable**: lo que hay en `main` compila y pasa todos los tests. Nunca se trabaja directamente sobre ella.
   - **Única excepción:** el commit inicial se hizo directamente sobre `main`, porque antes de él no existe ningún commit desde el que crear una rama.
-   - **GitHub lo impone:** `main` solo acepta cambios mediante Pull Request. Antes de publicar el repositorio, las ramas se integraban en local.
+  - **GitHub lo impone:** `main` solo acepta cambios mediante Pull Request. Antes de publicar el repositorio, las ramas se integraban en local.
 - **Cada cambio se hace en una rama corta**, creada desde `main`, que vive solo lo que dura ese cambio.
 - **El prefijo indica el tipo de cambio:**
 
