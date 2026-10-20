@@ -40,12 +40,17 @@ Levanta dos servicios, accesibles solo desde tu propio ordenador:
 
 ### Primera vez
 
-1. Copia `infra/.env.example` como `infra/.env` y pon tus contraseñas. `infra/.env` no se sube al repositorio.
-2. Levanta el entorno desde la raíz del repositorio:
+1. Clona el repositorio y entra en su carpeta:
+```
+   git clone https://github.com/enriquegar95/citajusta.git
+   cd citajusta
+```
+2. Copia `infra/.env.example` como `infra/.env` y pon tus contraseñas. `infra/.env` no se sube al repositorio.
+3. Levanta el entorno desde la raíz del repositorio:
 ```
    docker compose -f infra/docker-compose.yml up -d
 ```
-3. Comprueba que los dos servicios aparecen como `healthy`:
+4. Comprueba que los dos servicios aparecen como `healthy`:
 ```
    docker compose -f infra/docker-compose.yml ps
 ```
@@ -69,6 +74,7 @@ Levanta dos servicios, accesibles solo desde tu propio ordenador:
 
 - **`main` es siempre estable**: lo que hay en `main` compila y pasa todos los tests. Nunca se trabaja directamente sobre ella.
   - **Única excepción:** el commit inicial se hizo directamente sobre `main`, porque antes de él no existe ningún commit desde el que crear una rama.
+   - **GitHub lo impone:** `main` solo acepta cambios mediante Pull Request. Antes de publicar el repositorio, las ramas se integraban en local.
 - **Cada cambio se hace en una rama corta**, creada desde `main`, que vive solo lo que dura ese cambio.
 - **El prefijo indica el tipo de cambio:**
 
@@ -80,11 +86,12 @@ Levanta dos servicios, accesibles solo desde tu propio ordenador:
 
 El ciclo de cada rama:
 
-1. Crear la rama desde `main` actualizado.
+1. Actualizar `main` y crear la rama desde ella (`git switch main`, `git pull`, `git switch -c <rama>`).
 2. Trabajar en ella con commits pequeños.
-3. Abrir un Pull Request hacia `main`. *(Previsto: cuando el repositorio esté publicado en GitHub. Mientras tanto, la rama se revisa e integra en local.)*
-4. Integrar en `main` cuando la revisión esté aprobada y los tests pasen. *(Previsto: que los tests se ejecuten en el CI. Hasta que exista, se ejecutan en local antes de integrar.)*
-5. Borrar la rama.
+3. Subir la rama a GitHub: `git push -u origin <rama>`.
+4. Abrir un Pull Request hacia `main`, con el título en Conventional Commits.
+5. Integrarlo en GitHub con **Squash and merge**: los commits de la rama se convierten en un único commit en `main`, cuyo mensaje es el título del PR. Antes de integrar, los tests se ejecutan en local. *(Previsto: que se ejecuten automáticamente en el CI.)*
+6. Borrar la rama. GitHub la borra automáticamente al integrar; en local, volver a `main`, hacer `git pull` y borrar la rama local.
 
 ## Convención de commits
 
@@ -113,3 +120,5 @@ Los commits siguen **[Conventional Commits](https://www.conventionalcommits.org/
 Un cambio que rompe la compatibilidad se marca con `!` después del tipo, por ejemplo `feat(api)!: cambiar el formato de las fechas`.
 
 Esta convención permite leer y filtrar la historia del proyecto, y calcular la versión automáticamente: un `fix` sube la versión de parche, un `feat` la versión menor y un cambio incompatible la versión mayor.
+
+El título de cada Pull Request sigue la misma convención, porque con Squash and merge es el mensaje del commit que queda en `main`. GitHub le añade al final el número del PR, por ejemplo `docs: explicar el flujo de trabajo con pull requests (#1)`.
