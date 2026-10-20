@@ -91,7 +91,14 @@ El ciclo de cada rama:
 3. Subir la rama a GitHub: `git push -u origin <rama>`.
 4. Abrir un Pull Request hacia `main`, con el título en Conventional Commits.
 5. Integrarlo en GitHub con **Squash and merge**: los commits de la rama se convierten en un único commit en `main`, cuyo mensaje es el título del PR. Antes de integrar, los tests se ejecutan en local. *(Previsto: que se ejecuten automáticamente en el CI.)*
-6. Borrar la rama. GitHub la borra automáticamente al integrar; en local, volver a `main`, hacer `git pull` y borrar la rama local.
+6. Borrar la rama. GitHub borra la rama remota automáticamente al integrar. En local, en este orden:
+```
+   git switch main
+   git pull
+   git branch -d <rama>
+   git fetch --prune
+```
+   `git branch -d` muestra un aviso y borra la rama: es normal, porque todavía existe la referencia a la rama remota. Si se niega, comprueba con `git log` que `main` contiene el commit del PR (con su número al final) y bórrala con `git branch -D <rama>`.
 
 ## Convención de commits
 
